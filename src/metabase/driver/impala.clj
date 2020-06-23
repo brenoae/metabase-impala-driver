@@ -82,21 +82,10 @@
 
 (defmethod sql.qp/quote-style :impala [_] :mysql)
 
-(defn- trunc
-  "Truncate a datetime, also see:
-   https://www.cloudera.com/documentation/enterprise/5-8-x/topics/impala_datetime_functions.html
-
-      (trunc :day v) -> TRUNC(v, 'day')"
-  [format-template v]
-  (hsql/call :trunc v (hx/literal format-template)))
-
-(defn- extract-old
-  "Extract value from datetime field), also see:
-   https://www.cloudera.com/documentation/enterprise/5-8-x/topics/impala_datetime_functions.html
-
-      (extract :day v) -> extract(v, 'dd')"
-  [format-template v]
-  (hsql/call :extract v (hx/literal format-template)))
+(defn- trunc [format-template expr]
+  (hsql/call :trunc
+    (hx/->timestamp expr)
+        (hx/literal format-template)))
 
 (defmethod driver/humanize-connection-error-message :impala
   [_ message]
