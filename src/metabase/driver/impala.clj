@@ -200,6 +200,10 @@
   [driver ps i t]
   (sql-jdbc.execute/set-parameter driver ps i (t/local-date-time t (t/local-time 0))))
 
+(defmethod sql-jdbc.execute/set-parameter [:impala OffsetDateTime]
+  [driver ps i t]
+  (sql-jdbc.execute/set-parameter driver ps i (t/sql-timestamp t)))
+
 ;; TIMEZONE FIXME — not sure what timezone the results actually come back as
 (defmethod sql-jdbc.execute/read-column-thunk [:impala Types/TIME]
   [_ ^ResultSet rs rsmeta ^Integer i]
